@@ -19,7 +19,7 @@ val overrideReconcilerChoices : Common.reconItem list -> unit
 (* argument is `Force), then set it as specified by the second argument.     *)
 val setDirection :
   Common.reconItem ->
-  [`Older | `Newer | `Merge | `Replica1ToReplica2 | `Replica2ToReplica1] ->
+  [`Older | `Newer | `Merge | `Replica1ToReplica2 | `Replica2ToReplica1 | `Bigger | `Smaller] ->
   [`Force | `Prefer] ->
   unit
 

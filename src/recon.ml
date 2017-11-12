@@ -34,7 +34,26 @@ let setDirection ri dir force =
         diff.direction <- Replica2ToReplica1
       else if dir=`Merge then begin
         if Globals.shouldMerge ri.path1 then diff.direction <- Merge
-      end else begin  (* dir = `Older or dir = `Newer *)
+      end else if dir=`Bigger or dir=`Smaller then begin
+        match rc1.status, rc2.status with
+          `Deleted, _ ->
+            if isConflict default then
+              diff.direction <- Replica2ToReplica1
+        | _, `Deleted ->
+            if isConflict default then
+              diff.direction <- Replica1ToReplica2
+        | _ ->
+			let comp = if Props.length rc1.desc < Props.length rc2.desc then -1
+				else if Props.length rc1.desc > Props.length rc2.desc then 1
+				else 0 in
+            (*let comp = (Uutil.Filesize.toFloat (Props.length rc1.desc)) -. (Uutil.Filesize.toFloat (Props.length rc2.desc)) in - *)
+            let comp = if dir=`Bigger then -1 * comp else comp in
+            if comp<0 then
+              diff.direction <- Replica1ToReplica2
+            else
+              diff.direction <- Replica2ToReplica1
+      end
+      else begin  (* dir = `Older or dir = `Newer *)
         match rc1.status, rc2.status with
           `Deleted, _ ->
             if isConflict default then

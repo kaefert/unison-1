@@ -4047,6 +4047,18 @@ lst_store#set ~row ~column:c_path path;
             doAction (fun ri _ ->
                         Recon.setDirection ri `Older `Prefer))
          "Resolve Conflicts in Favor of Least Recently Modified");
+    grAdd grAction
+      (actionMenu#add_item
+         ~callback:(fun () ->
+            doAction (fun ri _ ->
+                        Recon.setDirection ri `Bigger `Prefer))
+         "Resolve Conflicts in Favor of Bigger Files");
+    grAdd grAction
+      (actionMenu#add_item
+         ~callback:(fun () ->
+            doAction (fun ri _ ->
+                        Recon.setDirection ri `Smaller `Prefer))
+         "Resolve Conflicts in Favor of Smaller Files");
     ignore (actionMenu#add_separator ());
     grAdd grAction
       (actionMenu#add_item

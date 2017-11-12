@@ -199,11 +199,11 @@ let replicaContent2string rc sep =
   | (`FILE|`SYMLINK|`DIRECTORY), `Deleted ->
       assert false
 
-let replicaContent2shortString rc =
+let replicaContent2shortString rc rc_other =
   match rc.typ, rc.status with
     _, `Unchanged             -> "        "
   | `ABSENT, `Deleted         -> "deleted "
-  | `FILE, `Created           -> choose "new file" "file    "
+  | `FILE, `Created           -> "file "^string_of_int ((Uutil.Filesize.toInt (Props.length rc.desc)) - (Uutil.Filesize.toInt (Props.length rc_other.desc)))
   | `FILE, `Modified          -> "changed "
   | `FILE, `PropsChanged      -> "props   "
   | `SYMLINK, `Created        -> choose "new link" "link    "
@@ -287,9 +287,9 @@ let reconItem2stringList oldPath theRI =
       ("        ", AError, "        ", displayPath oldPath theRI.path1)
   | Different diff ->
       let partial = diff.errors1 <> [] || diff.errors2 <> [] in
-      (replicaContent2shortString diff.rc1,
+      (replicaContent2shortString diff.rc1 diff.rc2,
        direction2action partial diff.direction,
-       replicaContent2shortString diff.rc2,
+       replicaContent2shortString diff.rc2 diff.rc1,
        Path.toString theRI.path1)
 
 let reconItem2string oldPath theRI status =
